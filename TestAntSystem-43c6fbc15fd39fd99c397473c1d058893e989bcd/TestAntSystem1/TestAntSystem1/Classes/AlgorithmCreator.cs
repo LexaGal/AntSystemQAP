@@ -18,6 +18,7 @@ namespace TestAntSystem1.Classes
         public AlgorithmCreator(Stream stream)
         {
             CreatorGraph = new Graph();
+            
             CreatorGraph.LoadGraph(stream);
             
             CreatorAnts = new List<IAnt>();

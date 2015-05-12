@@ -9,13 +9,17 @@ namespace TestAntSystem1
     {        
         public static void Main()
         {
-            AlgorithmCreator standartCreator = new AlgorithmCreator(new FileStream(@"C:\Users\Alex\Desktop\Graph.txt", FileMode.Open));
+            AlgorithmCreator standartCreator = new AlgorithmCreator(new FileStream(@"C:\Graph.txt", FileMode.Open));
             
             IAlgorithm standartAlgorithm = standartCreator.CreateStandartAlgorithm();
             
             standartAlgorithm.Run();
+
+            StreamWriter writer = new StreamWriter(@"C:\Result.txt");
+            ((StandartAntAlgorithm) standartAlgorithm).Result.CopyTo(writer.BaseStream);
             
-            Console.ReadKey();
+            writer.Write(true);
+            
         }
     }
 }

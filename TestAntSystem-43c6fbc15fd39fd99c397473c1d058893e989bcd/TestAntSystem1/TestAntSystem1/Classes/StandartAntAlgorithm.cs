@@ -10,6 +10,10 @@ namespace TestAntSystem1.Classes
 {
     public class StandartAntAlgorithm : IAlgorithm
     {
+        public StringBuilder ResultBuilder { get; set; }
+
+        public Stream Result { get; set; } 
+
         public IGraph Graph { get; set; }
 
         public IList<IAnt> Ants { get; set; }
@@ -111,34 +115,23 @@ namespace TestAntSystem1.Classes
             {
                 p23 = p23 + m2;
             }
-
             if (p21 < 0)
             {
                 p21 = p21 + m2;
             }
 
-            x20 = x21;
-            x21 = x22;
             x22 = p21 - p23;
 
             if (x22 < 0)
             {
                 x22 = x22 + m2;
             }
-
             if (x12 < x22)
             {
                 h = x12 - x22 + m;
             }
-
             else h = x12 - x22;
-
-            if (h == 0)
-            {
-                Console.WriteLine("h == 0\n");
-                return 1.0;
-            }
-
+            
             return h*coeff;
         }
 
@@ -363,8 +356,8 @@ namespace TestAntSystem1.Classes
                 BestAnt.VisitedNodes = (IList<INode>)DeepObjectClone(ant.VisitedNodes);
                 ((Ant)BestAnt).PathCost = ((Ant)ant).PathCost;
 
-                Console.WriteLine(Result());
-
+                NewResultUpdate();
+                
                 return true;
             }
             if (newOne == bestOne)
@@ -410,22 +403,20 @@ namespace TestAntSystem1.Classes
       
         public bool IsFinished()
         {
-            if (CurrentIteration == MaxIterations)
+            if (CurrentIteration == MaxIterations || CurrentIterationNoChanges == MaxIterationsNoChanges)
             {
-                Console.WriteLine("End");
+                ResultBuilder.Append("End");
+                Result = new MemoryStream(Encoding.UTF8.GetBytes(ResultBuilder.ToString()));
                 return true;
             }
-            if (CurrentIterationNoChanges == MaxIterationsNoChanges)
-            {
-                Console.WriteLine("End");
-                return true;
-            }
+            
             return false;
         }
 
         public void Run()
         {
-            Console.WriteLine("Start\n");
+            ResultBuilder = new StringBuilder();
+            ResultBuilder.Append("Start\n");
 
             while (!IsFinished())
             {
@@ -452,7 +443,7 @@ namespace TestAntSystem1.Classes
             }
         }
 
-        public string Result()
+        public void NewResultUpdate()
         {
             StringBuilder result = new StringBuilder();
             result.Append(String.Format("----------------------\nCost: {0}", ((Ant)BestAnt).PathCost));
@@ -464,8 +455,8 @@ namespace TestAntSystem1.Classes
             result.Append(String.Format("\nIn location: {0} - ", BestAnt.VisitedNodes.Count)).Append(String.Format("item: {0}", BestAnt.VisitedNodes.Last().Id + 1));
 
             result.Append(String.Format("\nIteration: {0}\n----------------------", CurrentIteration + 1)).Append(Environment.NewLine);
-            
-            return result.ToString();
+
+            ResultBuilder.Append(result);
         }
     }
 }
